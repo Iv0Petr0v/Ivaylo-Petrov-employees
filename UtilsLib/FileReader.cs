@@ -50,7 +50,8 @@ namespace UtilsLib
                         }
                         else
                         {
-                            throw new Exception("Date format like - March 15, 2013 , 03/01/2016 is not suported!");
+                            // throw new Exception("Date format like - March 15, 2013 , 03/01/2016 is not suported!");
+                            continue;
                         }
                     }
                     else
