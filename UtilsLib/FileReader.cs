@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using DTO;
+﻿using DTO;
 using Microsoft.AspNetCore.Http;
 using UtilsLibAbstract;
 
@@ -50,7 +49,12 @@ namespace UtilsLib
                         }
                         else
                         {
-                            // throw new Exception("Date format like - March 15, 2013 , 03/01/2016 is not suported!");
+                            if (parts[3].StartsWith('"'))
+                            {
+                                dateFrom = parts[3] + " " + parts[4];
+                                model.DateFrom = ParseDate(GetDateOrToday(dateFrom));
+                            }
+
                             continue;
                         }
                     }
