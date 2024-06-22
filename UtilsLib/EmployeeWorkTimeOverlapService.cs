@@ -24,17 +24,7 @@ namespace UtilsLib
                     {
                         int days = CalculateOverlap(employees[i], employees[i]);
 
-                            if (days > 0)
-                            {
-                                var pair = GetPair(employees, i, i);
-
-                                if (!overlapDict.ContainsKey(pair))
-                                {
-                                    overlapDict[pair] = 0;
-                                }
-
-                                overlapDict[pair] += days;
-                            }
+                        OverlapDays(overlapDict, employees, i, i, days);
                     }
                     else
                     {
@@ -42,17 +32,7 @@ namespace UtilsLib
                         {
                             int days = CalculateOverlap(employees[i], employees[j]);
 
-                            if (days > 0)
-                            {
-                                var pair = GetPair(employees, i, j);
-
-                                if (!overlapDict.ContainsKey(pair))
-                                {
-                                    overlapDict[pair] = 0;
-                                }
-
-                                overlapDict[pair] += days;
-                            }
+                            OverlapDays(overlapDict, employees, i, j, days);
                         }
                     }
                 }
@@ -66,6 +46,21 @@ namespace UtilsLib
                     ProjectID = kv.Key.Item3,
                     DaysWorkedTogether = kv.Value
                 });
+        }
+
+        private void OverlapDays(Dictionary<(int, int, int), int> overlapDict, Span<EmployeeProjectInputModel> employees, int i, int j, int days)
+        {
+            if (days > 0)
+            {
+                var pair = GetPair(employees, i, j);
+
+                if (!overlapDict.ContainsKey(pair))
+                {
+                    overlapDict[pair] = 0;
+                }
+
+                overlapDict[pair] += days;
+            }
         }
 
         private (int, int, int) GetPair(

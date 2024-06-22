@@ -1,9 +1,7 @@
-﻿using System;
+﻿using System.Text.RegularExpressions;
 using DTO;
 using Microsoft.AspNetCore.Http;
-using Microsoft.VisualBasic;
 using UtilsLibAbstract;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace UtilsLib
 {
@@ -52,12 +50,8 @@ namespace UtilsLib
                         }
                         else
                         {
-                            var isDateFrom = ParseDate(GetDateOrToday(parts[2]));
-                          
-
+                            throw new Exception("Date format like - March 15, 2013 , 03/01/2016 is not suported!");
                         }
-
-
                     }
                     else
                     {
