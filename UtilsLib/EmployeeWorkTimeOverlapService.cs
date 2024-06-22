@@ -12,56 +12,37 @@ namespace UtilsLib
             var overlapDict = new Dictionary<(int, int, int), int>();
 
             var groups = projects
-                .GroupBy(p => p.ProjectID);
+                .GroupBy(p => p.ProjectID)
+                .ToList();
 
-            CalculateOverlapDays(overlapDict, groups);
-
-            return overlapDict
-                .Select(kv => new PairOfEmployeesModel
+            var result = groups
+                .Join(groups,
+                      b => new { b.Key },
+                      a => new { a.Key },
+                      (b, a) => b)
+                .GroupBy(b => b.Key)
+                .Select(g => new
                 {
-                    EmpID1 = kv.Key.Item1,
-                    EmpID2 = kv.Key.Item2,
-                    ProjectID = kv.Key.Item3,
-                    DaysWorkedTogether = kv.Value
+                    Empl1 = g.ToArray().FirstOrDefault().FirstOrDefault().EmpID,
+                    Empl2 = g.ToArray().LastOrDefault().LastOrDefault().EmpID,
+                    ProjectID = g.Key,
+                    DateFrom = g.Min(b => b?.FirstOrDefault()?.DateFrom),
+                    DateTo = g.Max(b => b?.FirstOrDefault()?.DateTo),
+                    Val = (g.Max(b => b?.FirstOrDefault()?.DateTo) - g.Min(b => b?.FirstOrDefault()?.DateFrom))?.Days + 1 > 0
+                     ? (g.Max(b => b?.FirstOrDefault()?.DateTo) - g.Min(b => b?.FirstOrDefault()?.DateFrom))?.Days + 1
+                     : 0
+                })
+                .ToArray()
+                .OrderBy(c => c.Val)
+                .Select(c => new PairOfEmployeesModel
+                {
+                    EmpID1 = c.Empl1,
+                    EmpID2 = c.Empl2,
+                    ProjectID = c.ProjectID,
+                    DaysWorkedTogether = (int)((c.Val == null) ? 0 : c.Val),
                 });
-        }
 
-        private static void CalculateOverlapDays(Dictionary<(int, int, int), int> overlapDict, IEnumerable<IGrouping<int, EmployeeProjectInputModel>> groups)
-        {
-            foreach (var employees in from projectGroup in groups
-                                      let employees = projectGroup.ToArray()
-                                      select employees)
-            {
-                if (employees.Length != 1)
-                {
-                    AddOverlapDays(overlapDict, employees);
-                }
-                else
-                {
-                    continue;
-                }
-            }
-        }
-
-        private static void AddOverlapDays(Dictionary<(int, int, int), int> overlapDict, EmployeeProjectInputModel[] employees)
-        {
-            var from = employees.Min(c => c.DateFrom);
-            var to = employees.Max(c => c.DateTo);
-
-            var edays = (to - from).Days + 1 > 0
-                ? (to - from).Days + 1
-                : 0;
-
-            var firstEmplpyee = employees.FirstOrDefault();
-            var lastEmplpyee = employees.LastOrDefault();
-
-            (int, int, int) key = (
-                firstEmplpyee.EmpID,
-                lastEmplpyee.EmpID,
-                firstEmplpyee.ProjectID);
-
-            overlapDict.Add(key, edays);
+            return result;
         }
     }
 }
-
