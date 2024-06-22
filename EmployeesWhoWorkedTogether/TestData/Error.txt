@@ -1,0 +1,4 @@
+﻿EmpID,ProjectID,DateFrom,DateTo
+143,10,2009-01-01,NULL
+218,15,2015/06/05,"June 20, 2015"
+143,18,March 15, 2013 , 03/01/2016" 

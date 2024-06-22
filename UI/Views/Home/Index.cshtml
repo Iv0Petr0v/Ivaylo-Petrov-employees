@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container custom-container">
+    <h1 class="display-4">Attach a file with employees and projects!</h1>
+
+    <div class="row">
+        <div class="col-md-8 mb-3">
+            <div class="input-group custom-file-input">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="fileInput">
+                    <label class="custom-file-label" for="fileInput">Choose file</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <button class="btn btn-primary btn-block" type="button" onclick="uploadFile()">Upload</button>
+        </div>
+    </div>
+
+    <div id="message" class="mb-3"></div>
+
+    <div id="loader" class="text-center mt-5" style="display: none;">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p>Loading...</p>
+    </div>
+
+    <div id="table-container"></div>
+</div>
