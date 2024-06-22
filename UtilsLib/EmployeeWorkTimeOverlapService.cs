@@ -22,9 +22,7 @@ namespace UtilsLib
                 {
                     if (employees.Length == 1)
                     {
-                        int days = CalculateOverlap(employees[i], employees[i]);
-
-                        OverlapDays(overlapDict, employees, i, i, days);
+                        continue;
                     }
                     else
                     {
@@ -48,19 +46,24 @@ namespace UtilsLib
                 });
         }
 
-        private void OverlapDays(Dictionary<(int, int, int), int> overlapDict, Span<EmployeeProjectInputModel> employees, int i, int j, int days)
+        private void OverlapDays(
+            Dictionary<(int, int, int), int> overlapDict,
+            Span<EmployeeProjectInputModel> employees,
+            int i,
+            int j,
+            int days)
         {
-            if (days > 0)
+            //if (days > 0)
+            //{
+            var pair = GetPair(employees, i, j);
+
+            if (!overlapDict.ContainsKey(pair))
             {
-                var pair = GetPair(employees, i, j);
-
-                if (!overlapDict.ContainsKey(pair))
-                {
-                    overlapDict[pair] = 0;
-                }
-
-                overlapDict[pair] += days;
+                overlapDict[pair] = 0;
             }
+
+            overlapDict[pair] += days;
+            //}
         }
 
         private (int, int, int) GetPair(
@@ -70,6 +73,7 @@ namespace UtilsLib
         {
             var minNumber = Math.Min(employees[i].EmpID, employees[j].EmpID);
             var maxNumber = Math.Max(employees[i].EmpID, employees[j].EmpID);
+            
             var projectID = employees[i].ProjectID;
 
             return (minNumber, maxNumber, projectID);
@@ -79,17 +83,17 @@ namespace UtilsLib
             EmployeeProjectInputModel emp1,
             EmployeeProjectInputModel emp2)
         {
-            DateTime maxStart = emp1.DateFrom > emp2.DateFrom
+            DateTime minStart = emp1.DateFrom < emp2.DateFrom
                 ? emp1.DateFrom
                 : emp2.DateFrom;
 
-            DateTime minEnd = emp1.DateTo < emp2.DateTo
+            DateTime maxEnd = emp1.DateTo > emp2.DateTo
                 ? emp1.DateTo
                 : emp2.DateTo;
 
-            return (minEnd - maxStart).Days + 1 > 0
-                ? (minEnd - maxStart).Days + 1
-                : 0;
+            return (maxEnd - minStart).Days + 1 > 0
+                   ? (maxEnd - minStart).Days + 1
+                   : 0;
         }
     }
 }
